@@ -108,6 +108,10 @@
           <label>Peso Muerto Convencional – 1RM (kg)</label>
           <input type="number" id="rm_dead" min="0" step="0.5" placeholder="Ej: 160">
         </div>
+        <div>
+          <label>Hip Thrust – 1RM (kg)</label>
+          <input type="number" id="rm_ht" min="0" step="0.5" placeholder="Ej: 140">
+        </div>
       </div>
     </div>
 
@@ -115,7 +119,7 @@
     <div class="accordion">
       <!-- LUNES -->
       <details open>
-        <summary><span class="day">Lunes – Piernas / Potencia</span> <span class="badge">Sprints, Olímpicos, Frontal</span></summary>
+        <summary><span class="day">Lunes – Piernas / Potencia</span> <span class="badge">Sprints, Olímpicos, Frontal, Hip Thrust, Nordic</span></summary>
         <div class="ex">
           <h4>Sprints 20–30 m</h4>
           <div class="meta">6–8 repeticiones · descanso 90–120 s · <span class="pill">sin kg</span></div>
@@ -158,38 +162,38 @@
             <div style="display:flex;align-items:flex-end"><span id="saved_fsq" class="saved"></span></div>
           </div>
         </div>
-        <div class="ex" data-ex="jsq">
-          <h4>Jump Squat (barra ligera)</h4>
-          <div class="meta">3×5 · recomendado 20–30% del 1RM de sentadilla frontal · <span class="pill">explosivo</span></div>
+        <div class="ex" data-ex="ht">
+          <h4>Hip Thrust pesado</h4>
+          <div class="meta">4×8 · Cargas por semana · <span id="scheme_ht" class="pill"></span></div>
           <div class="rec-box">
             <div>
               <label>Recomendado (kg)</label>
-              <input type="number" id="rec_jsq" readonly>
+              <input type="number" id="rec_ht" readonly>
             </div>
             <div>
               <label>Usado (kg)</label>
-              <input type="number" id="used_jsq" step="0.5">
+              <input type="number" id="used_ht" step="0.5">
             </div>
             <div>
               <label>Notas</label>
-              <input type="text" id="note_jsq" placeholder="20–30% FSQ 1RM">
+              <input type="text" id="note_ht" placeholder="1 s de pausa arriba">
             </div>
-            <div style="display:flex;align-items:flex-end"><span id="saved_jsq" class="saved"></span></div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_ht" class="saved"></span></div>
           </div>
         </div>
-        <div class="ex" data-ex="hinge">
-          <h4>Nordic / Peso muerto rumano</h4>
-          <div class="meta">3×6–8 · progresión en reps cada 2 semanas</div>
+        <div class="ex" data-ex="nordic">
+          <h4>Nordic Hamstring (excéntrico)</h4>
+          <div class="meta">Sem 1–2: 3×6 · Sem 3–4: 3×6–8 · Sem 5–6: 4×6</div>
           <div class="rec-box">
             <div>
-              <label>Usado (kg)</label>
-              <input type="number" id="used_hinge" step="0.5">
+              <label>Usado (kg)**</label>
+              <input type="number" id="used_nordic" step="0.5" placeholder="0 si BW">
             </div>
             <div>
               <label>Notas</label>
-              <input type="text" id="note_hinge" placeholder="Nordic asistido / RDL">
+              <input type="text" id="note_nordic" placeholder="excéntrico lento, asistencia si hace falta">
             </div>
-            <div style="display:flex;align-items:flex-end"><span id="saved_hinge" class="saved"></span></div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_nordic" class="saved"></span></div>
           </div>
         </div>
         <div class="ex">
@@ -292,10 +296,10 @@
 
       <!-- JUEVES -->
       <details>
-        <summary><span class="day">Jueves – Tirón (Upper)</span> <span class="badge">Dominadas, Peso Muerto, Remo</span></summary>
+        <summary><span class="day">Jueves – Tirón (Upper)</span> <span class="badge">Dominadas PRONAS, RDL, Remo</span></summary>
         <div class="ex" data-ex="pullups">
-          <h4>Dominadas (progresión)</h4>
-          <div class="meta">Sem 1–2: 4×6 · Sem 3–4: 5×5 · Sem 5–6: 5×4 pesado / clusters 3+2</div>
+          <h4>Dominadas pronas (base)</h4>
+          <div class="meta">Sem 1–2: 4×6 · Sem 3–4: 5×5 · Sem 5–6: 5×4 pesado / clusters 3+2 · <span class="pill">alterná neutras si molestan codos</span></div>
           <div class="rec-box">
             <div>
               <label>Lastre usado (kg) – o 0 si BW</label>
@@ -309,8 +313,8 @@
           </div>
         </div>
         <div class="ex" data-ex="dead">
-          <h4>Peso Muerto Convencional</h4>
-          <div class="meta">Cargas por semana · <span id="scheme_dead" class="pill"></span></div>
+          <h4>Peso Muerto Rumano (RDL)</h4>
+          <div class="meta">Usa 1RM de peso muerto conv. para referencia · <span id="scheme_dead" class="pill"></span></div>
           <div class="rec-box">
             <div>
               <label>Recomendado (kg)</label>
@@ -322,7 +326,7 @@
             </div>
             <div>
               <label>Notas</label>
-              <input type="text" id="note_dead" placeholder="control lumbar, sin ir al límite">
+              <input type="text" id="note_dead" placeholder="descenso controlado, estiramiento isquio">
             </div>
             <div style="display:flex;align-items:flex-end"><span id="saved_dead" class="saved"></span></div>
           </div>
@@ -373,7 +377,7 @@
     </div>
 
     <div class="footer">
-      <p>Consejo: priorizá la <strong>velocidad del movimiento</strong> por sobre el peso en olímpicos y saltos. Si la barra se vuelve lenta, bajá un paso.</p>
+      <p>Consejo: priorizá la <strong>velocidad del movimiento</strong> por sobre el peso en olímpicos. Si la barra se vuelve lenta, bajá un paso. En isquios: <strong>excéntrico controlado</strong> (Nordic, RDL) y <strong>extensión de cadera potente</strong> (Hip Thrust).</p>
     </div>
   </div>
 
@@ -383,13 +387,15 @@
       clean:  [0.70, 0.75, 0.775, 0.80, 0.825, 0.85],
       fsq:    [0.70, 0.725, 0.75, 0.775, 0.80, 0.825],
       bench:  [0.70, 0.72, 0.75, 0.77, 0.80, 0.80],
-      dead:   [0.70, 0.725, 0.75, 0.775, 0.80, 0.80]
+      dead:   [0.70, 0.725, 0.75, 0.775, 0.80, 0.80], // usado como referencia para RDL
+      ht:     [0.65, 0.675, 0.70, 0.725, 0.75, 0.775] // Hip Thrust 4x8
     };
     const scheme = {
       clean:["5×3","5×3","6×2","6×2","5×2","5×2"],
       fsq:  ["4×5","4×5","5×4","5×4","5×3","5×3"],
       bench:["4×6","4×6","5×5","5×5","5×4","5×4"],
-      dead: ["4×5","4×5","4×4","4×4","4×3","4×3"]
+      dead: ["4×5","4×5","4×4","4×4","4×3","4×3"], // RDL
+      ht:   ["4×8","4×8","4×8","4×8","4×8","4×8"]
     };
 
     // ---------- Helpers ----------
@@ -408,7 +414,7 @@
     };
 
     // Cargar/guardar 1RM
-    const rmInputs = {clean:$("rm_clean"), fsq:$("rm_fsq"), bench:$("rm_bench"), dead:$("rm_dead")};
+    const rmInputs = {clean:$("rm_clean"), fsq:$("rm_fsq"), bench:$("rm_bench"), dead:$("rm_dead"), ht:$("rm_ht")};
     function loadRMs(){
       const saved = JSON.parse(localStorage.getItem(LS.rms)||"{}");
       for(const k of Object.keys(rmInputs)){
@@ -446,6 +452,7 @@
       $("scheme_fsq").textContent   = scheme.fsq[w];
       $("scheme_bench").textContent = scheme.bench[w];
       $("scheme_dead").textContent  = scheme.dead[w];
+      $("scheme_ht").textContent    = scheme.ht[w];
     }
 
     function recalcAll(){
@@ -455,18 +462,18 @@
         clean: parseFloat($("rm_clean").value)||0,
         fsq:   parseFloat($("rm_fsq").value)||0,
         bench: parseFloat($("rm_bench").value)||0,
-        dead:  parseFloat($("rm_dead").value)||0
+        dead:  parseFloat($("rm_dead").value)||0,
+        ht:    parseFloat($("rm_ht").value)||0
       };
       // Recomendados
       $("rec_clean").value = suggest(rms.clean, pct.clean[w])||"";
       $("rec_fsq").value   = suggest(rms.fsq,   pct.fsq[w])||"";
-      // Jump squat ~ 25% FSQ 1RM
-      $("rec_jsq").value   = rms.fsq? r(rms.fsq*0.25, parseFloat(roundingSel.value)) : "";
       $("rec_bench").value = suggest(rms.bench, pct.bench[w])||"";
-      $("rec_dead").value  = suggest(rms.dead,  pct.dead[w])||"";
+      $("rec_dead").value  = suggest(rms.dead,  pct.dead[w])||""; // RDL
+      $("rec_ht").value    = suggest(rms.ht,    pct.ht[w])||"";
 
       // Cargar usados/notas guardados de la semana activa
-      for(const key of ["clean","fsq","jsq","hinge","bench","dbohp","incline","latraise","triceps","pullups","dead","row","curl"]) {
+      for(const key of ["clean","fsq","ht","nordic","bench","dbohp","incline","latraise","triceps","pullups","dead","row","curl"]) {
         const used = localStorage.getItem(LS.used(w,key));
         const note = localStorage.getItem(LS.note(w,key));
         const u = $("used_"+key); const n = $("note_"+key);
@@ -487,7 +494,7 @@
 
     // Bind autosave a todos los inputs con id used_* y note_*
     function bindAutosave(){
-      const ids = ["clean","fsq","jsq","hinge","bench","dbohp","incline","latraise","triceps","pullups","dead","row","curl"]; 
+      const ids = ["clean","fsq","ht","nordic","bench","dbohp","incline","latraise","triceps","pullups","dead","row","curl"]; 
       ids.forEach(k=>{
         const u = $("used_"+k); const n = $("note_"+k);
         if(u) u.addEventListener('input', ()=>autoSave(k));
@@ -500,7 +507,7 @@
       const out = {rms: JSON.parse(localStorage.getItem(LS.rms)||"{}"), weeks:{}};
       for(let w=0; w<6; w++){
         out.weeks[w+1] = {};
-        ["clean","fsq","jsq","hinge","bench","dbohp","incline","latraise","triceps","pullups","dead","row","curl"].forEach(k=>{
+        ["clean","fsq","ht","nordic","bench","dbohp","incline","latraise","triceps","pullups","dead","row","curl"].forEach(k=>{
           const used = localStorage.getItem(LS.used(w,k));
           const note = localStorage.getItem(LS.note(w,k));
           if(used!==null || note!==null) out.weeks[w+1][k] = {used, note};
