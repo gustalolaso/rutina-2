@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plan 6 Semanas – Rugby (Wing) | Gym + Potencia</title>
+  <style>
+    :root{
+      --bg:#0f1116; --panel:#161922; --muted:#8b93a7; --text:#e6e9f2; --accent:#7aa2ff; --ok:#7ee787; --warn:#ffb86b; --danger:#ff6b6b;
+      --radius:16px;
+    }
+    html,body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Ubuntu,Arial,sans-serif;}
+    *{box-sizing:border-box}
+    h1,h2,h3{margin:0 0 .5rem}
+    .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
+    .card{background:var(--panel);border:1px solid #1f2430;border-radius:var(--radius);padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+    .grid{display:grid;gap:16px}
+    .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    @media (max-width:920px){.grid.cols-2,.grid.cols-3{grid-template-columns:1fr}}
+    label{font-size:.9rem;color:var(--muted)}
+    input[type="number"], input[type="text"], select, textarea{
+      width:100%;padding:10px 12px;border-radius:12px;border:1px solid #2a3142;background:#0c0f15;color:var(--text);
+      outline:none;transition:border .2s ease
+    }
+    input:focus, select:focus, textarea:focus{border-color:var(--accent)}
+    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .btn{appearance:none;border:none;border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:600}
+    .btn.primary{background:var(--accent);color:#0a0c12}
+    .btn.ghost{background:transparent;color:var(--text);border:1px solid #2a3142}
+    .btn.danger{background:var(--danger);color:#0a0c12}
+    .note{font-size:.92rem;color:var(--muted)}
+
+    /* Accordion */
+    .accordion{display:grid;gap:12px;margin-top:18px}
+    details{background:#121623;border:1px solid #22293a;border-radius:14px;padding:10px 12px}
+    summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px}
+    summary::-webkit-details-marker{display:none}
+    .day{font-weight:800}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.8rem;background:#1a2236;border:1px solid #28324a;color:var(--muted)}
+
+    /* Exercise */
+    .ex{display:grid;gap:10px;border-top:1px dashed #2a3142;padding-top:12px;margin-top:12px}
+    .ex:first-of-type{border-top:none;margin-top:0;padding-top:0}
+    .ex h4{margin:0}
+    .ex .meta{font-size:.92rem;color:var(--muted)}
+    .pill{display:inline-flex;gap:6px;align-items:center;padding:2px 8px;border-radius:999px;border:1px solid #2a3142;color:var(--muted)}
+
+    .rec-box{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+    @media (max-width:840px){.rec-box{grid-template-columns:1fr 1fr}}
+    .saved{font-size:.86rem;color:var(--ok)}
+
+    .footer{margin-top:20px;color:var(--muted);font-size:.9rem}
+    .kicker{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" style="margin-bottom:16px">
+      <h1>Plan 6 Semanas – Rugby (Wing)</h1>
+      <p class="kicker">Pierna enfocada en <strong>potencia/velocidad</strong>. Tren superior orientado a <strong>estética (hipertrofia)</strong>. Guardado local automático.</p>
+      <div class="grid cols-3" style="margin-top:12px">
+        <div>
+          <label for="week">Semana</label>
+          <select id="week">
+            <option value="1">Semana 1</option>
+            <option value="2">Semana 2</option>
+            <option value="3">Semana 3</option>
+            <option value="4">Semana 4</option>
+            <option value="5">Semana 5</option>
+            <option value="6">Semana 6</option>
+          </select>
+        </div>
+        <div>
+          <label for="rounding">Redondeo discos (kg)</label>
+          <select id="rounding">
+            <option value="0.5">0.5</option>
+            <option value="1">1</option>
+            <option value="2.5" selected>2.5</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+        <div class="row" style="align-items:flex-end">
+          <button class="btn primary" id="recalc">Recalcular sugerencias</button>
+          <button class="btn ghost" id="export">Exportar JSON</button>
+          <button class="btn danger" id="clearAll">Borrar TODO</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <h2>Tu 1RM estimado</h2>
+      <p class="note">Ingresá tus máximos estimados. Se usan para calcular las cargas <em>recomendadas</em> según la semana. Se guardan automáticamente.</p>
+      <div class="grid cols-2" style="margin-top:10px">
+        <div>
+          <label>Clean (Power/Hang) – 1RM (kg)</label>
+          <input type="number" id="rm_clean" min="0" step="0.5" placeholder="Ej: 80">
+        </div>
+        <div>
+          <label>Sentadilla Frontal – 1RM (kg)</label>
+          <input type="number" id="rm_fsq" min="0" step="0.5" placeholder="Ej: 110">
+        </div>
+        <div>
+          <label>Press Banca – 1RM (kg)</label>
+          <input type="number" id="rm_bench" min="0" step="0.5" placeholder="Ej: 100">
+        </div>
+        <div>
+          <label>Peso Muerto Convencional – 1RM (kg)</label>
+          <input type="number" id="rm_dead" min="0" step="0.5" placeholder="Ej: 160">
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCORDIONS -->
+    <div class="accordion">
+      <!-- LUNES -->
+      <details open>
+        <summary><span class="day">Lunes – Piernas / Potencia</span> <span class="badge">Sprints, Olímpicos, Frontal</span></summary>
+        <div class="ex">
+          <h4>Sprints 20–30 m</h4>
+          <div class="meta">6–8 repeticiones · descanso 90–120 s · <span class="pill">sin kg</span></div>
+        </div>
+        <div class="ex" data-ex="clean">
+          <h4>Clean (Power/Hang)</h4>
+          <div class="meta">Cargas por semana · <span id="scheme_clean" class="pill"></span></div>
+          <div class="rec-box">
+            <div>
+              <label>Recomendado (kg)</label>
+              <input type="number" id="rec_clean" readonly>
+            </div>
+            <div>
+              <label>Usado (kg)</label>
+              <input type="number" id="used_clean" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_clean" placeholder="RPE, técnica, etc.">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_clean" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex" data-ex="fsq">
+          <h4>Sentadilla Frontal</h4>
+          <div class="meta">Cargas por semana · <span id="scheme_fsq" class="pill"></span></div>
+          <div class="rec-box">
+            <div>
+              <label>Recomendado (kg)</label>
+              <input type="number" id="rec_fsq" readonly>
+            </div>
+            <div>
+              <label>Usado (kg)</label>
+              <input type="number" id="used_fsq" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_fsq" placeholder="Explosiva, 1–2 RIR">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_fsq" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex" data-ex="jsq">
+          <h4>Jump Squat (barra ligera)</h4>
+          <div class="meta">3×5 · recomendado 20–30% del 1RM de sentadilla frontal · <span class="pill">explosivo</span></div>
+          <div class="rec-box">
+            <div>
+              <label>Recomendado (kg)</label>
+              <input type="number" id="rec_jsq" readonly>
+            </div>
+            <div>
+              <label>Usado (kg)</label>
+              <input type="number" id="used_jsq" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_jsq" placeholder="20–30% FSQ 1RM">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_jsq" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex" data-ex="hinge">
+          <h4>Nordic / Peso muerto rumano</h4>
+          <div class="meta">3×6–8 · progresión en reps cada 2 semanas</div>
+          <div class="rec-box">
+            <div>
+              <label>Usado (kg)</label>
+              <input type="number" id="used_hinge" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_hinge" placeholder="Nordic asistido / RDL">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_hinge" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex">
+          <h4>Core antirotacional</h4>
+          <div class="meta">Paloff 3–4×10–12 · Ab-wheel 3×10</div>
+        </div>
+      </details>
+
+      <!-- MARTES -->
+      <details>
+        <summary><span class="day">Martes – Empuje (Upper)</span> <span class="badge">Banca, Hombros, Pecho, Tríceps</span></summary>
+        <div class="ex">
+          <h4>Plyo push-ups</h4>
+          <div class="meta">4×5 · rápidas · <span class="pill">sin kg</span></div>
+        </div>
+        <div class="ex" data-ex="bench">
+          <h4>Press Banca Plano</h4>
+          <div class="meta">Cargas por semana · <span id="scheme_bench" class="pill"></span></div>
+          <div class="rec-box">
+            <div>
+              <label>Recomendado (kg)</label>
+              <input type="number" id="rec_bench" readonly>
+            </div>
+            <div>
+              <label>Usado (kg)</label>
+              <input type="number" id="used_bench" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_bench" placeholder="RIR 1–2">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_bench" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex" data-ex="dbohp">
+          <h4>Press Militar con mancuernas</h4>
+          <div class="meta">4×8–10 · subí carga manteniendo técnica</div>
+          <div class="rec-box">
+            <div>
+              <label>Usado (kg por mancuerna)</label>
+              <input type="number" id="used_dbohp" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_dbohp" placeholder="mismo rango de reps">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_dbohp" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex" data-ex="incline">
+          <h4>Press Inclinado</h4>
+          <div class="meta">3×8–10</div>
+          <div class="rec-box">
+            <div>
+              <label>Usado (kg)</label>
+              <input type="number" id="used_incline" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_incline" placeholder="barra o mancuernas">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_incline" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex" data-ex="latraise">
+          <h4>Elevaciones Laterales</h4>
+          <div class="meta">Sem 1–2: 3×12 · Sem 3–4: 3×15 · Sem 5–6: 4×12–15</div>
+          <div class="rec-box">
+            <div>
+              <label>Usado (kg por mancuerna)</label>
+              <input type="number" id="used_latraise" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_latraise" placeholder="pausas arriba, control">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_latraise" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex" data-ex="triceps">
+          <h4>Tríceps (cuerda o press francés)</h4>
+          <div class="meta">3×12–15</div>
+          <div class="rec-box">
+            <div>
+              <label>Usado (kg)</label>
+              <input type="number" id="used_triceps" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_triceps" placeholder="estiramiento completo">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_triceps" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex">
+          <h4>Core</h4>
+          <div class="meta">Planchas dinámicas / hollow – 3×40–50 s</div>
+        </div>
+      </details>
+
+      <!-- JUEVES -->
+      <details>
+        <summary><span class="day">Jueves – Tirón (Upper)</span> <span class="badge">Dominadas, Peso Muerto, Remo</span></summary>
+        <div class="ex" data-ex="pullups">
+          <h4>Dominadas (progresión)</h4>
+          <div class="meta">Sem 1–2: 4×6 · Sem 3–4: 5×5 · Sem 5–6: 5×4 pesado / clusters 3+2</div>
+          <div class="rec-box">
+            <div>
+              <label>Lastre usado (kg) – o 0 si BW</label>
+              <input type="number" id="used_pullups" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_pullups" placeholder="agarre, rango, control">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_pullups" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex" data-ex="dead">
+          <h4>Peso Muerto Convencional</h4>
+          <div class="meta">Cargas por semana · <span id="scheme_dead" class="pill"></span></div>
+          <div class="rec-box">
+            <div>
+              <label>Recomendado (kg)</label>
+              <input type="number" id="rec_dead" readonly>
+            </div>
+            <div>
+              <label>Usado (kg)</label>
+              <input type="number" id="used_dead" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_dead" placeholder="control lumbar, sin ir al límite">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_dead" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex" data-ex="row">
+          <h4>Remo (barra o mancuerna)</h4>
+          <div class="meta">4×8–10</div>
+          <div class="rec-box">
+            <div>
+              <label>Usado (kg)</label>
+              <input type="number" id="used_row" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_row" placeholder="1 s de pausa en pecho si con barra">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_row" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex">
+          <h4>Face Pull</h4>
+          <div class="meta">3×15 · salud del hombro</div>
+        </div>
+        <div class="ex" data-ex="curl">
+          <h4>Curl Bíceps</h4>
+          <div class="meta">3×10–12</div>
+          <div class="rec-box">
+            <div>
+              <label>Usado (kg)</label>
+              <input type="number" id="used_curl" step="0.5">
+            </div>
+            <div>
+              <label>Notas</label>
+              <input type="text" id="note_curl" placeholder="estricto, sin balanceo">
+            </div>
+            <div style="display:flex;align-items:flex-end"><span id="saved_curl" class="saved"></span></div>
+          </div>
+        </div>
+        <div class="ex">
+          <h4>Y – T – W</h4>
+          <div class="meta">3×12 · estabilidad escapular</div>
+        </div>
+        <div class="ex">
+          <h4>Core rotacional</h4>
+          <div class="meta">Russian twist con disco · 3×15 por lado</div>
+        </div>
+      </details>
+    </div>
+
+    <div class="footer">
+      <p>Consejo: priorizá la <strong>velocidad del movimiento</strong> por sobre el peso en olímpicos y saltos. Si la barra se vuelve lenta, bajá un paso.</p>
+    </div>
+  </div>
+
+  <script>
+    // ---------- Datos de progresión por semana ----------
+    const pct = {
+      clean:  [0.70, 0.75, 0.775, 0.80, 0.825, 0.85],
+      fsq:    [0.70, 0.725, 0.75, 0.775, 0.80, 0.825],
+      bench:  [0.70, 0.72, 0.75, 0.77, 0.80, 0.80],
+      dead:   [0.70, 0.725, 0.75, 0.775, 0.80, 0.80]
+    };
+    const scheme = {
+      clean:["5×3","5×3","6×2","6×2","5×2","5×2"],
+      fsq:  ["4×5","4×5","5×4","5×4","5×3","5×3"],
+      bench:["4×6","4×6","5×5","5×5","5×4","5×4"],
+      dead: ["4×5","4×5","4×4","4×4","4×3","4×3"]
+    };
+
+    // ---------- Helpers ----------
+    const $ = (id)=>document.getElementById(id);
+    const weekSel = $("week");
+    const roundingSel = $("rounding");
+    const r = (v, step)=> Math.round(v/step)*step;
+    const getWeek = ()=> parseInt(weekSel.value,10)-1; // 0..5
+
+    // Keys para localStorage
+    const LS = {
+      rms:"rugb_wing_rms",
+      used:(week, key)=>`rugb_wing_w${week+1}_${key}_used`,
+      note:(week, key)=>`rugb_wing_w${week+1}_${key}_note`,
+      ui:"rugb_wing_ui_state"
+    };
+
+    // Cargar/guardar 1RM
+    const rmInputs = {clean:$("rm_clean"), fsq:$("rm_fsq"), bench:$("rm_bench"), dead:$("rm_dead")};
+    function loadRMs(){
+      const saved = JSON.parse(localStorage.getItem(LS.rms)||"{}");
+      for(const k of Object.keys(rmInputs)){
+        if(saved[k]!=null) rmInputs[k].value = saved[k];
+        rmInputs[k].addEventListener('input', saveRMsAndRecalc);
+      }
+    }
+    function saveRMsAndRecalc(){
+      const data = {};
+      for(const k of Object.keys(rmInputs)) data[k] = parseFloat(rmInputs[k].value)||0;
+      localStorage.setItem(LS.rms, JSON.stringify(data));
+      recalcAll();
+    }
+
+    // Leer UI state (week, rounding)
+    function loadUI(){
+      const ui = JSON.parse(localStorage.getItem(LS.ui)||"{}");
+      if(ui.week) weekSel.value = ui.week;
+      if(ui.rounding) roundingSel.value = ui.rounding;
+    }
+    function saveUI(){
+      localStorage.setItem(LS.ui, JSON.stringify({week:weekSel.value, rounding:roundingSel.value}));
+    }
+
+    // Recalcular sugerencias
+    function suggest(onedRM, p){
+      const step = parseFloat(roundingSel.value);
+      if(!onedRM) return 0;
+      return r(onedRM*p, step);
+    }
+
+    function setSchemeLabels(){
+      const w = getWeek();
+      $("scheme_clean").textContent = scheme.clean[w];
+      $("scheme_fsq").textContent   = scheme.fsq[w];
+      $("scheme_bench").textContent = scheme.bench[w];
+      $("scheme_dead").textContent  = scheme.dead[w];
+    }
+
+    function recalcAll(){
+      const w = getWeek();
+      setSchemeLabels();
+      const rms = {
+        clean: parseFloat($("rm_clean").value)||0,
+        fsq:   parseFloat($("rm_fsq").value)||0,
+        bench: parseFloat($("rm_bench").value)||0,
+        dead:  parseFloat($("rm_dead").value)||0
+      };
+      // Recomendados
+      $("rec_clean").value = suggest(rms.clean, pct.clean[w])||"";
+      $("rec_fsq").value   = suggest(rms.fsq,   pct.fsq[w])||"";
+      // Jump squat ~ 25% FSQ 1RM
+      $("rec_jsq").value   = rms.fsq? r(rms.fsq*0.25, parseFloat(roundingSel.value)) : "";
+      $("rec_bench").value = suggest(rms.bench, pct.bench[w])||"";
+      $("rec_dead").value  = suggest(rms.dead,  pct.dead[w])||"";
+
+      // Cargar usados/notas guardados de la semana activa
+      for(const key of ["clean","fsq","jsq","hinge","bench","dbohp","incline","latraise","triceps","pullups","dead","row","curl"]) {
+        const used = localStorage.getItem(LS.used(w,key));
+        const note = localStorage.getItem(LS.note(w,key));
+        const u = $("used_"+key); const n = $("note_"+key);
+        if(u) u.value = used!==null? used: "";
+        if(n) n.value = note!==null? note: "";
+        const s = $("saved_"+key); if(s) s.textContent = "";
+      }
+    }
+
+    function autoSave(key){
+      const w = getWeek();
+      const u = $("used_"+key); const n = $("note_"+key);
+      if(u) localStorage.setItem(LS.used(w,key), u.value);
+      if(n) localStorage.setItem(LS.note(w,key), n.value);
+      const s = $("saved_"+key);
+      if(s){ s.textContent = "Guardado ✓"; setTimeout(()=> s.textContent = "", 1200); }
+    }
+
+    // Bind autosave a todos los inputs con id used_* y note_*
+    function bindAutosave(){
+      const ids = ["clean","fsq","jsq","hinge","bench","dbohp","incline","latraise","triceps","pullups","dead","row","curl"]; 
+      ids.forEach(k=>{
+        const u = $("used_"+k); const n = $("note_"+k);
+        if(u) u.addEventListener('input', ()=>autoSave(k));
+        if(n) n.addEventListener('input', ()=>autoSave(k));
+      });
+    }
+
+    // Exportar todo a JSON (rms + logs)
+    function exportJSON(){
+      const out = {rms: JSON.parse(localStorage.getItem(LS.rms)||"{}"), weeks:{}};
+      for(let w=0; w<6; w++){
+        out.weeks[w+1] = {};
+        ["clean","fsq","jsq","hinge","bench","dbohp","incline","latraise","triceps","pullups","dead","row","curl"].forEach(k=>{
+          const used = localStorage.getItem(LS.used(w,k));
+          const note = localStorage.getItem(LS.note(w,k));
+          if(used!==null || note!==null) out.weeks[w+1][k] = {used, note};
+        });
+      }
+      const blob = new Blob([JSON.stringify(out,null,2)], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'plan_rugby_wing_6s.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function clearAll(){
+      if(!confirm('¿Borrar todas las cargas y 1RM guardados?')) return;
+      const keys = Object.keys(localStorage);
+      keys.forEach(k=>{ if(k.startsWith('rugb_wing_')) localStorage.removeItem(k); });
+      // Limpiar inputs visibles
+      Object.values(rmInputs).forEach(i=> i.value = "");
+      recalcAll();
+    }
+
+    // Eventos UI
+    weekSel.addEventListener('change', ()=>{ saveUI(); recalcAll(); });
+    roundingSel.addEventListener('change', ()=>{ saveUI(); recalcAll(); });
+    $("recalc").addEventListener('click', ()=>{ recalcAll(); });
+    $("export").addEventListener('click', exportJSON);
+    $("clearAll").addEventListener('click', clearAll);
+
+    // Init
+    loadUI();
+    loadRMs();
+    bindAutosave();
+    recalcAll();
+  </script>
+</body>
+</html>
